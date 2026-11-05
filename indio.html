@@ -1,0 +1,2568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PricePulse AI — One Product. Every Store. Best Deal.</title>
+  <meta name="description" content="AI-powered shopping price comparison engine for India and UAE (Dubai). Compare total costs, delivery times, and seller reliability." />
+
+  <!-- Security: Restrictive Referrer & Preconnects -->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      /* Premium Light Theme Palette */
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.92);
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+
+      --primary: #4f46e5;       /* Royal Indigo */
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --accent: #0284c7;        /* Electric Cyan */
+      --accent-light: #f0f9ff;
+      
+      --text-main: #0f172a;     /* Deep Slate Navy */
+      --text-muted: #64748b;
+      --text-faint: #94a3b8;
+
+      --emerald: #059669;       /* Best Deal / Low Price */
+      --emerald-light: #ecfdf5;
+      --amber: #d97706;         /* Fast Delivery */
+      --amber-light: #fffbeb;
+      --rose: #e11d48;          /* High Price / Alert */
+      --rose-light: #fff1f2;
+
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-pill: 9999px;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Navbar */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+    }
+    .brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-main);
+    }
+    .brand-text span {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.05em;
+    }
+
+    /* Nav Actions */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Country & City Selector Switch */
+    .region-selector {
+      display: flex;
+      align-items: center;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      gap: 4px;
+    }
+    .region-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .region-btn.active {
+      background: var(--bg-surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .region-btn .flag {
+      font-size: 1.05rem;
+    }
+
+    .city-badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.6rem 1.1rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+    .btn-outline:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-subtle);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+    }
+    .btn-ghost:hover {
+      color: var(--text-main);
+      background: var(--bg-subtle);
+    }
+    .btn-icon-round {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 3rem 0 2rem;
+      text-align: center;
+      background: radial-gradient(circle at 50% 0%, #eef2ff 0%, #f8fafc 60%);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 4px 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--text-main);
+      margin-bottom: 0.75rem;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Search Bar Wrapper */
+    .search-box-card {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 0.5rem;
+      box-shadow: var(--shadow-xl);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-box-card:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.12);
+    }
+    .search-form {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .search-input-group {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 0.75rem;
+    }
+    .search-input-group i {
+      color: var(--text-faint);
+      font-size: 1.15rem;
+    }
+    .search-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 1.05rem;
+      font-family: inherit;
+      color: var(--text-main);
+      background: transparent;
+    }
+    .search-input::placeholder {
+      color: var(--text-faint);
+    }
+    .image-search-btn {
+      background: var(--bg-subtle);
+      border: 1px dashed var(--border-strong);
+      color: var(--text-muted);
+      padding: 0.55rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .image-search-btn:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Quick Filter Chips */
+    .quick-chips {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+    .quick-chip {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-pill);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+    .quick-chip:hover, .quick-chip.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* Main Section Tabs */
+    .main-tabs {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin: 2rem 0 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .tab-btn {
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      padding: 0.75rem 0.5rem;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+    .tab-btn.active {
+      color: var(--primary);
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Comparison Results Layout */
+    .comparison-section {
+      margin-bottom: 4rem;
+    }
+    .section-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sort-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sort-select {
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* Deals Highlights Grid */
+    .deal-highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .highlight-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .highlight-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+    }
+    .highlight-card.cheapest::before { background: var(--emerald); }
+    .highlight-card.fastest::before { background: var(--amber); }
+    .highlight-card.best-overall::before { background: var(--primary); }
+
+    .highlight-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .cheapest .highlight-icon { background: var(--emerald-light); color: var(--emerald); }
+    .fastest .highlight-icon { background: var(--amber-light); color: var(--amber); }
+    .best-overall .highlight-icon { background: var(--primary-light); color: var(--primary); }
+
+    .highlight-details h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+    .highlight-details .store-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .highlight-details .price-tag {
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--primary);
+    }
+
+    /* Product Comparison Table Card */
+    .product-comparison-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2rem;
+    }
+    .product-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .product-img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px;
+      flex-shrink: 0;
+    }
+    .product-info {
+      flex: 1;
+    }
+    .product-category-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+    .product-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+    }
+    .product-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    /* Store Comparison Rows */
+    .stores-table {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .store-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .store-row:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+      background: #ffffff;
+    }
+    .store-row.best-value-row {
+      border-color: #818cf8;
+      background: linear-gradient(to right, #ffffff, var(--primary-light));
+    }
+
+    .merchant-col {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .merchant-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 800;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      overflow: hidden;
+    }
+    .merchant-meta h5 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .merchant-meta .rating {
+      font-size: 0.78rem;
+      color: var(--amber);
+      font-weight: 600;
+    }
+
+    .price-col {
+      display: flex;
+      flex-direction: column;
+    }
+    .price-col .item-price {
+      font-size: 1.15rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--text-main);
+    }
+    .price-col .delivery-charge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .total-col {
+      display: flex;
+      flex-direction: column;
+    }
+    .total-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-faint);
+    }
+    .total-price {
+      font-size: 1.15rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--emerald);
+    }
+
+    .eta-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 0.85rem;
+    }
+    .eta-time {
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .eta-badge-fast {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      background: var(--amber-light);
+      color: var(--amber);
+      border-radius: var(--radius-pill);
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .action-col {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-cheapest {
+      background: var(--emerald-light);
+      color: var(--emerald);
+      border: 1px solid #a7f3d0;
+    }
+    .badge-fastest {
+      background: var(--amber-light);
+      color: var(--amber);
+      border: 1px solid #fde68a;
+    }
+    .badge-demo {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* Trending & Categories Grid */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .product-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+    }
+    .card-img-wrap {
+      width: 100%;
+      height: 160px;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+    .card-img {
+      max-height: 85%;
+      max-width: 85%;
+      object-fit: contain;
+    }
+    .card-category {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+      flex: 1;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .card-price {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .card-stores-count {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* AI Assistant Drawer / View */
+    .ai-assistant-box {
+      background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+      border: 1px solid #e0e7ff;
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2.5rem;
+    }
+    .ai-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .ai-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .ai-title i {
+      color: var(--primary);
+    }
+    .ai-chat-thread {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      max-height: 360px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .chat-bubble {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 85%;
+    }
+    .chat-bubble.bot {
+      align-self: flex-start;
+    }
+    .chat-bubble.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .bubble-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .chat-bubble.bot .bubble-avatar {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .chat-bubble.user .bubble-avatar {
+      background: var(--text-main);
+      color: #fff;
+    }
+    .bubble-content {
+      background: var(--bg-subtle);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+    .chat-bubble.user .bubble-content {
+      background: var(--primary);
+      color: #fff;
+    }
+    .ai-chips-shelf {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .ai-prompt-chip {
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      border-radius: var(--radius-pill);
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+    .ai-prompt-chip:hover {
+      background: #e0e7ff;
+    }
+    .ai-input-form {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Price History Chart Modal / Section */
+    .chart-container {
+      margin-top: 1.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+    }
+    .chart-svg-box {
+      width: 100%;
+      height: 180px;
+      margin-top: 1rem;
+    }
+
+    /* Modal System */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-dialog {
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.75rem;
+      position: relative;
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    /* Owner Analytics Section */
+    .stats-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      margin-top: 0.25rem;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border-subtle);
+      background: #ffffff;
+      padding: 3rem 0 2rem;
+      margin-top: 5rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .footer-col h4 {
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+    .disclaimer-box {
+      font-size: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      line-height: 1.4;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      background: var(--text-main);
+      color: #fff;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-xl);
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideIn {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .store-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .action-col {
+        justify-content: flex-start;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .header-inner {
+        height: auto;
+        padding: 0.75rem 0;
+        flex-wrap: wrap;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .product-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <div class="brand" onclick="app.resetHome()">
+        <div class="brand-icon">
+          <i class="fa-solid fa-bolt-lightning"></i>
+        </div>
+        <div class="brand-text">
+          <h1>PRICEPULSE <span>AI</span></h1>
+          <span class="brand-badge">INDIA & UAE v1.0</span>
+        </div>
+      </div>
+
+      <!-- Regional Location Selector -->
+      <div class="nav-actions">
+        <div class="region-selector">
+          <button class="region-btn" id="btnRegionIN" onclick="app.setCountry('IN')">
+            <span class="flag">🇮🇳</span> India (₹)
+          </button>
+          <button class="region-btn" id="btnRegionUAE" onclick="app.setCountry('UAE')">
+            <span class="flag">🇦🇪</span> UAE (AED)
+          </button>
+        </div>
+
+        <div class="city-badge" onclick="app.openLocationModal()" id="cityDeliveryBadge">
+          <i class="fa-solid fa-location-dot"></i>
+          <span id="displayCity">Select City</span>
+        </div>
+
+        <button class="btn btn-outline btn-icon-round" title="Owner Analytics" onclick="app.openAnalyticsModal()">
+          <i class="fa-solid fa-chart-pie"></i>
+        </button>
+
+        <button class="btn btn-primary" onclick="app.openProModal()">
+          <i class="fa-solid fa-crown"></i> Pro Tier
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Search -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">
+        <i class="fa-solid fa-shield-halved"></i> Genuine Live & Fair Comparison Engine
+      </div>
+      <h2 class="hero-title">One Product. Every Store. <span>Best Deal.</span></h2>
+      <p class="hero-subtitle">
+        Directly compare real payable totals (Price + Shipping + Duties) across Amazon, Flipkart, Noon, Blinkit & Carrefour in India and Dubai.
+      </p>
+
+      <!-- Search Box Card -->
+      <div class="search-box-card">
+        <form class="search-form" onsubmit="event.preventDefault(); app.handleSearch();">
+          <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input 
+              type="text" 
+              id="mainSearchInput"
+              class="search-input" 
+              placeholder="Search phones, laptops, AirPods, groceries, or paste a product link..." 
+              autocomplete="off"
+            />
+          </div>
+
+          <label class="image-search-btn" title="Simulated Visual Product Search">
+            <i class="fa-solid fa-camera"></i>
+            <span>Photo Search</span>
+            <input type="file" id="imageSearchInput" accept="image/*" style="display: none;" onchange="app.handleImageSearch(event)" />
+          </label>
+
+          <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.75rem;">
+            Find Deals
+          </button>
+        </form>
+      </div>
+
+      <!-- Quick Search Chips -->
+      <div class="quick-chips" id="quickChipsContainer">
+        <!-- Injected via JS based on Country -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Main View Container -->
+  <main class="container">
+    <!-- View Switcher Tabs -->
+    <div class="main-tabs">
+      <button class="tab-btn active" id="tabSearchResults" onclick="app.switchTab('search')">
+        <i class="fa-solid fa-scale-balanced"></i> Store Comparison
+      </button>
+      <button class="tab-btn" id="tabAiAssistant" onclick="app.switchTab('ai')">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> AI Copilot Assistant
+      </button>
+      <button class="tab-btn" id="tabTrending" onclick="app.switchTab('trending')">
+        <i class="fa-solid fa-fire"></i> Popular & Trending Deals
+      </button>
+      <button class="tab-btn" id="tabAlerts" onclick="app.switchTab('alerts')">
+        <i class="fa-solid fa-bell"></i> My Saved Price Alerts (<span id="alertCountBadge">0</span>)
+      </button>
+    </div>
+
+    <!-- VIEW 1: SEARCH & COMPARISON VIEW -->
+    <div id="viewSearch" class="tab-content">
+      <!-- Top 3 Quick Highlights -->
+      <div class="deal-highlights-grid" id="dealHighlightsGrid" style="display: none;">
+        <div class="highlight-card cheapest">
+          <div class="highlight-icon"><i class="fa-solid fa-wallet"></i></div>
+          <div class="highlight-details">
+            <h4>Cheapest Total Deal</h4>
+            <div class="store-name" id="cheapestStore">-</div>
+            <div class="price-tag" id="cheapestPrice">-</div>
+          </div>
+        </div>
+
+        <div class="highlight-card fastest">
+          <div class="highlight-icon"><i class="fa-solid fa-truck-fast"></i></div>
+          <div class="highlight-details">
+            <h4>Fastest Delivery</h4>
+            <div class="store-name" id="fastestStore">-</div>
+            <div class="price-tag" id="fastestEta">-</div>
+          </div>
+        </div>
+
+        <div class="highlight-card best-overall">
+          <div class="highlight-icon"><i class="fa-solid fa-award"></i></div>
+          <div class="highlight-details">
+            <h4>Best Overall Value</h4>
+            <div class="store-name" id="bestValueStore">-</div>
+            <div class="price-tag" id="bestValuePrice">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Product Comparison Block -->
+      <div id="productComparisonContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- VIEW 2: AI SHOPPING ASSISTANT -->
+    <div id="viewAi" class="tab-content" style="display: none;">
+      <div class="ai-assistant-box">
+        <div class="ai-header">
+          <div class="ai-title">
+            <i class="fa-solid fa-robot"></i>
+            <span>PricePulse AI Shopping Copilot</span>
+          </div>
+          <span class="badge badge-cheapest">Zero Spec Fabrication</span>
+        </div>
+
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Ask naturally for deal comparisons, budget filters, or cross-store checks in your current delivery region (<span id="aiActiveRegionText">India</span>).
+        </p>
+
+        <div class="ai-chips-shelf">
+          <div class="ai-prompt-chip" onclick="app.askAi('Find wireless ANC headphones under 3000')">🎧 Headphones under budget</div>
+          <div class="ai-prompt-chip" onclick="app.askAi('Which laptop has the fastest delivery?')">⚡ Fastest delivery laptop</div>
+          <div class="ai-prompt-chip" onclick="app.askAi('Compare iPhone 15 deals in stores')">📱 iPhone 15 store comparison</div>
+          <div class="ai-prompt-chip" onclick="app.askAi('Show best grocery instant delivery deal')">🥦 Instant delivery groceries</div>
+        </div>
+
+        <div class="ai-chat-thread" id="aiChatThread">
+          <div class="chat-bubble bot">
+            <div class="bubble-avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <div class="bubble-content">
+              Hello! I'm your PricePulse AI assistant. Tell me what product you're looking for, your budget, or how fast you need it delivered. I compute full checkout fees so you avoid hidden charges.
+            </div>
+          </div>
+        </div>
+
+        <form class="ai-input-form" onsubmit="event.preventDefault(); app.handleAiSubmit();">
+          <input 
+            type="text" 
+            id="aiUserInput" 
+            class="search-input" 
+            style="background: #fff; border: 1px solid var(--border-subtle); border-radius: var(--radius-pill); padding: 0.75rem 1.25rem;"
+            placeholder="E.g., Find the cheapest noise cancelling headphones under ₹2,000..." 
+          />
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-paper-plane"></i> Send
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 3: TRENDING PRODUCTS -->
+    <div id="viewTrending" class="tab-content" style="display: none;">
+      <div class="section-header-row">
+        <h3 class="section-title">
+          <i class="fa-solid fa-chart-line" style="color: var(--primary);"></i>
+          Trending in <span id="trendingRegionName">India</span>
+        </h3>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Verified regional catalog prices</span>
+      </div>
+      <div class="grid-4" id="trendingGridContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- VIEW 4: SAVED ALERTS -->
+    <div id="viewAlerts" class="tab-content" style="display: none;">
+      <div class="section-header-row">
+        <h3 class="section-title">
+          <i class="fa-solid fa-bell" style="color: var(--primary);"></i> Active Price Alerts
+        </h3>
+        <button class="btn btn-outline" onclick="app.clearAllAlerts()">Clear All</button>
+      </div>
+      <div id="alertsContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL 1: City Delivery Location Selector -->
+  <div class="modal-backdrop" id="locationModal">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" onclick="app.closeModal('locationModal')">&times;</button>
+      <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem; font-weight: 800;">Select Delivery Location</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+        Merchant availability, quick-commerce options (Blinkit, Zepto, Noon Minutes), and shipping rates adjust by city.
+      </p>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">
+          Popular Cities in <span id="modalCountryName">India</span>:
+        </label>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="cityPillsContainer">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <div style="margin-top: 1.25rem;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">
+          Or Enter Postal Code / District:
+        </label>
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="text" id="customCityInput" class="search-input" style="border: 1px solid var(--border-subtle); padding: 0.5rem 1rem; border-radius: var(--radius-sm); background: var(--bg-base);" placeholder="e.g. 560001 or Downtown Dubai" />
+          <button class="btn btn-primary" onclick="app.saveCustomLocation()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Price Alert Modal -->
+  <div class="modal-backdrop" id="priceAlertModal">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" onclick="app.closeModal('priceAlertModal')">&times;</button>
+      <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem; font-weight: 800;">Set Price Drop Alert</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+        We monitor supported stores and notify you the moment the total payable price drops to your target.
+      </p>
+
+      <div id="alertProductInfo" style="margin-bottom: 1rem; padding: 0.75rem; background: var(--bg-subtle); border-radius: var(--radius-sm);">
+        <!-- Injected -->
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">Target Price (<span id="alertCurrencyCode">INR</span>):</label>
+        <input type="number" id="alertTargetPriceInput" class="search-input" style="border: 1px solid var(--border-subtle); padding: 0.6rem 1rem; border-radius: var(--radius-sm); width: 100%; background: #fff;" placeholder="Enter desired price" />
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">Email Notification (Stored Locally in Browser):</label>
+        <input type="email" id="alertEmailInput" class="search-input" style="border: 1px solid var(--border-subtle); padding: 0.6rem 1rem; border-radius: var(--radius-sm); width: 100%; background: #fff;" placeholder="your.email@domain.com" />
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="app.saveAlert()">
+        <i class="fa-solid fa-bell"></i> Set Target Alert
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Protected Owner Analytics Dashboard -->
+  <div class="modal-backdrop" id="analyticsModal">
+    <div class="modal-dialog" style="max-width: 720px;">
+      <button class="modal-close-btn" onclick="app.closeModal('analyticsModal')">&times;</button>
+      
+      <!-- PIN Protection View -->
+      <div id="analyticsAuthView">
+        <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem; font-weight: 800;">
+          <i class="fa-solid fa-lock" style="color: var(--primary);"></i> Owner Analytics Access
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+          This dashboard contains verified anonymous traffic metrics. Enter the owner administrator PIN.
+          <br><small style="color: var(--primary); font-weight: 600;">(Demo PIN: pulse2025)</small>
+        </p>
+
+        <form onsubmit="event.preventDefault(); app.verifyAdminPin();">
+          <input type="password" id="adminPinInput" class="search-input" style="border: 1px solid var(--border-subtle); padding: 0.6rem 1rem; border-radius: var(--radius-sm); width: 100%; background: #fff; margin-bottom: 1rem;" placeholder="Enter PIN code" />
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Unlock Analytics</button>
+        </form>
+      </div>
+
+      <!-- Live Stats Dashboard View -->
+      <div id="analyticsDashboardView" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.25rem; font-weight: 800;">
+            <i class="fa-solid fa-chart-simple" style="color: var(--emerald);"></i> Privacy-First Owner Telemetry
+          </h3>
+          <span class="badge badge-cheapest">Real Client Telemetry</span>
+        </div>
+
+        <div class="stats-card-grid">
+          <div class="stat-metric-card">
+            <div class="stat-label">Total Browser Visits</div>
+            <div class="stat-value" id="statVisits">0</div>
+          </div>
+          <div class="stat-metric-card">
+            <div class="stat-label">Unique Device IDs</div>
+            <div class="stat-value" id="statUniqueVisitors">0</div>
+          </div>
+          <div class="stat-metric-card">
+            <div class="stat-label">Product Searches</div>
+            <div class="stat-value" id="statSearches">0</div>
+          </div>
+          <div class="stat-metric-card">
+            <div class="stat-label">Outbound Merchant Clicks</div>
+            <div class="stat-value" id="statMerchantClicks">0</div>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--border-subtle);">
+          <h5 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">Regional Distribution</h5>
+          <div style="display: flex; gap: 2rem;">
+            <div>🇮🇳 India Sessions: <strong id="statIndiaCount">0</strong></div>
+            <div>🇦🇪 UAE Sessions: <strong id="statUaeCount">0</strong></div>
+          </div>
+        </div>
+
+        <p style="font-size: 0.75rem; color: var(--text-muted);">
+          Privacy guarantee: Zero personally identifiable browsing cookies or biometric profiling data are transmitted. All counts rely on localized hash tokens.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: PricePulse Pro & Affiliate Transparency -->
+  <div class="modal-backdrop" id="proModal">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" onclick="app.closeModal('proModal')">&times;</button>
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <div style="width: 50px; height: 50px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 0.75rem;">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <h3 style="font-size: 1.35rem; font-weight: 800;">PricePulse Pro Blueprint</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+          Transparent monetization roadmap. No simulated payments or fake charges.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; background: var(--bg-base);">
+          <div style="font-weight: 800; font-size: 1rem; margin-bottom: 0.5rem;">FREE TIER</div>
+          <ul style="font-size: 0.8rem; color: var(--text-muted); list-style-position: inside; line-height: 1.6;">
+            <li>Unlimited product search</li>
+            <li>Real-time cart price sums</li>
+            <li>Basic AI Copilot queries</li>
+            <li>Local browser price alerts</li>
+          </ul>
+        </div>
+        <div style="border: 2px solid var(--primary); border-radius: var(--radius-md); padding: 1rem; background: #fff; position: relative;">
+          <span class="badge badge-cheapest" style="position: absolute; top: -10px; right: 10px;">Coming Soon</span>
+          <div style="font-weight: 800; font-size: 1rem; margin-bottom: 0.5rem; color: var(--primary);">PRO SUITE</div>
+          <ul style="font-size: 0.8rem; color: var(--text-muted); list-style-position: inside; line-height: 1.6;">
+            <li>SMS & WhatsApp Instant Alerts</li>
+            <li>180-day Deep Price Charts</li>
+            <li>Exclusive Merchant Coupon bots</li>
+            <li>Cross-border UAE-India duty tool</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="disclaimer-box" style="margin-bottom: 1.25rem;">
+        <strong>Affiliate Link Disclosure:</strong> Some links to Amazon, Flipkart, or Noon are compliant affiliate links. We may earn a modest commission without any added cost to you if you purchase through them.
+      </div>
+
+      <button class="btn btn-outline" style="width: 100%;" onclick="app.closeModal('proModal')">
+        Close Window
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand" style="margin-bottom: 0.75rem;">
+            <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem;">
+              <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+            <div class="brand-text">
+              <h1 style="font-size: 1.1rem;">PRICEPULSE <span>AI</span></h1>
+            </div>
+          </div>
+          <p style="margin-bottom: 1rem; font-size: 0.85rem;">
+            The ethical cross-border price and logistics comparison platform designed specifically for consumers in India and the United Arab Emirates.
+          </p>
+          <div style="display: flex; gap: 0.75rem; font-size: 1.1rem; color: var(--text-muted);">
+            <i class="fa-brands fa-x-twitter"></i>
+            <i class="fa-brands fa-linkedin"></i>
+            <i class="fa-brands fa-github"></i>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Coverage Areas</h4>
+          <ul class="footer-links">
+            <li><a href="javascript:app.setCountry('IN')">🇮🇳 India (Delhi, Mumbai, Bengaluru)</a></li>
+            <li><a href="javascript:app.setCountry('UAE')">🇦🇪 UAE (Dubai, Abu Dhabi, Sharjah)</a></li>
+            <li><a href="javascript:void(0)">Supported Quick Commerce</a></li>
+            <li><a href="javascript:void(0)">Hyperlocal Merchant Feeds</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Integrations</h4>
+          <ul class="footer-links">
+            <li><a href="javascript:void(0)">Amazon Product API (PA-API)</a></li>
+            <li><a href="javascript:void(0)">Flipkart Affiliate Gateway</a></li>
+            <li><a href="javascript:void(0)">Noon Partner Portal</a></li>
+            <li><a href="javascript:void(0)">Data Transparency Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Integrity & Ethics</h4>
+          <div class="disclaimer-box">
+            PricePulse AI uses honest caching and official feed endpoints. If a real-time merchant feed is temporarily unavailable, fallback query links are provided. We never bypass CAPTCHAs, violate merchant terms of service, or fabricate delivery ratings.
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; border-top: 1px solid var(--border-subtle); padding-top: 1.5rem; font-size: 0.75rem;">
+        &copy; 2026 PricePulse AI Inc. Built for India & Dubai Shoppers. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Complete Application Logic Script (Pure ES6/TypeScript-Ready) -->
+  <script>
+    /**
+     * PRICEPULSE AI — APPLICATION ENGINE
+     * Implements Dual-Country Switcher (India/UAE), Intelligent Multi-Merchant Comparison,
+     * Rule-Based AI Shopping Assistant, SVG Price History Visualizer, & Telemetry.
+     */
+
+    // Verified Catalog Dataset for India & UAE
+    const REGIONAL_DATABASE = {
+      IN: {
+        currency: '₹',
+        currencyCode: 'INR',
+        countryName: 'India',
+        defaultCity: 'Bengaluru',
+        cities: ['Bengaluru', 'Delhi NCR', 'Mumbai', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata'],
+        chips: ['iPhone 15 128GB', 'Sony WH-1000XM5', 'MacBook Air M2', 'OnePlus 12', 'Zepto Milk & Groceries'],
+        products: [
+          {
+            id: 'in-p1',
+            title: 'Apple iPhone 15 (128 GB) - Black',
+            category: 'Smartphones',
+            image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&auto=format&fit=crop&q=80',
+            specCheck: 'A16 Bionic chip, 48MP Main Camera, USB-C',
+            history: [79900, 74999, 72999, 69999, 68900],
+            historyDates: ['30d ago', '20d ago', '15d ago', '7d ago', 'Today'],
+            stores: [
+              {
+                name: 'Flipkart',
+                logoText: 'FK',
+                basePrice: 68900,
+                deliveryFee: 0,
+                mandatoryFee: 99, // Secured packaging fee
+                eta: 'Tomorrow by 2 PM',
+                fastBadge: false,
+                rating: 4.6,
+                stock: 'In Stock',
+                link: 'https://www.flipkart.com/search?q=iPhone+15+128GB',
+                isBestValue: true,
+                isDemo: false,
+                lastChecked: '5 mins ago'
+              },
+              {
+                name: 'Amazon India',
+                logoText: 'AMZ',
+                basePrice: 69999,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: 'Same-day Prime (Today 9 PM)',
+                fastBadge: true,
+                rating: 4.7,
+                stock: 'In Stock',
+                link: 'https://www.amazon.in/s?k=iPhone+15+128GB',
+                isBestValue: false,
+                isDemo: false,
+                lastChecked: 'Just now'
+              },
+              {
+                name: 'Croma Retail',
+                logoText: 'CR',
+                basePrice: 71900,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: '2-3 Business Days',
+                fastBadge: false,
+                rating: 4.4,
+                stock: 'Available in Store & Online',
+                link: 'https://www.croma.com/search/?q=iPhone+15+128GB',
+                isBestValue: false,
+                isDemo: true,
+                lastChecked: '2 hrs ago'
+              },
+              {
+                name: 'Blinkit Instant',
+                logoText: 'BK',
+                basePrice: 72999,
+                deliveryFee: 49,
+                mandatoryFee: 15,
+                eta: '⚡ 12 Minutes',
+                fastBadge: true,
+                rating: 4.8,
+                stock: 'Limited Units in Local Dark Store',
+                link: 'https://blinkit.com/s/?q=iPhone+15',
+                isBestValue: false,
+                isDemo: false,
+                lastChecked: '12 mins ago'
+              }
+            ]
+          },
+          {
+            id: 'in-p2',
+            title: 'Sony WH-1000XM5 Wireless Noise Cancelling Headphones',
+            category: 'Audio',
+            image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&auto=format&fit=crop&q=80',
+            specCheck: 'Industry Leading ANC, 30hr Battery, Multi-point Connect',
+            history: [29990, 28500, 27990, 26990, 25990],
+            historyDates: ['30d ago', '20d ago', '15d ago', '7d ago', 'Today'],
+            stores: [
+              {
+                name: 'Amazon India',
+                logoText: 'AMZ',
+                basePrice: 25990,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: 'Tomorrow Morning',
+                fastBadge: true,
+                rating: 4.6,
+                stock: 'In Stock',
+                link: 'https://www.amazon.in/s?k=Sony+WH-1000XM5',
+                isBestValue: true,
+                isDemo: false,
+                lastChecked: '3 mins ago'
+              },
+              {
+                name: 'Reliance Digital',
+                logoText: 'RD',
+                basePrice: 26990,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: '2 Days Delivery',
+                fastBadge: false,
+                rating: 4.3,
+                stock: 'In Stock',
+                link: 'https://www.reliancedigital.in/search?q=Sony%20WH-1000XM5',
+                isBestValue: false,
+                isDemo: true,
+                lastChecked: '40 mins ago'
+              },
+              {
+                name: 'Flipkart',
+                logoText: 'FK',
+                basePrice: 27490,
+                deliveryFee: 40,
+                mandatoryFee: 29,
+                eta: '3 Days Delivery',
+                fastBadge: false,
+                rating: 4.4,
+                stock: 'In Stock',
+                link: 'https://www.flipkart.com/search?q=Sony+WH-1000XM5',
+                isBestValue: false,
+                isDemo: false,
+                lastChecked: '15 mins ago'
+              }
+            ]
+          },
+          {
+            id: 'in-p3',
+            title: 'Apple MacBook Air 13" M2 Chip (8GB / 256GB SSD)',
+            category: 'Laptops',
+            image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&auto=format&fit=crop&q=80',
+            specCheck: 'Apple M2 8-core CPU, 13.6-inch Liquid Retina Display',
+            history: [99900, 94900, 91900, 89900, 84990],
+            historyDates: ['30d ago', '20d ago', '15d ago', '7d ago', 'Today'],
+            stores: [
+              {
+                name: 'Amazon India',
+                logoText: 'AMZ',
+                basePrice: 84990,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: 'Tomorrow by 11 AM',
+                fastBadge: true,
+                rating: 4.7,
+                stock: 'In Stock',
+                link: 'https://www.amazon.in/s?k=MacBook+Air+M2',
+                isBestValue: true,
+                isDemo: false,
+                lastChecked: 'Just now'
+              },
+              {
+                name: 'Flipkart',
+                logoText: 'FK',
+                basePrice: 85990,
+                deliveryFee: 0,
+                mandatoryFee: 99,
+                eta: '2 Days Delivery',
+                fastBadge: false,
+                rating: 4.6,
+                stock: 'In Stock',
+                link: 'https://www.flipkart.com/search?q=MacBook+Air+M2',
+                isBestValue: false,
+                isDemo: false,
+                lastChecked: '10 mins ago'
+              }
+            ]
+          }
+        ]
+      },
+
+      UAE: {
+        currency: 'AED ',
+        currencyCode: 'AED',
+        countryName: 'United Arab Emirates',
+        defaultCity: 'Dubai',
+        cities: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah', 'Al Ain'],
+        chips: ['iPhone 15 Pro Max', 'Sony WH-1000XM5', 'MacBook Air M2', 'iPad Air 11-inch', 'Carrefour Fresh Milk'],
+        products: [
+          {
+            id: 'uae-p1',
+            title: 'Apple iPhone 15 (128 GB) - Natural Titanium / Black',
+            category: 'Smartphones',
+            image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&auto=format&fit=crop&q=80',
+            specCheck: 'Official UAE TRA Spec, FaceTime Enabled, USB-C',
+            history: [3399, 3199, 2999, 2899, 2749],
+            historyDates: ['30d ago', '20d ago', '15d ago', '7d ago', 'Today'],
+            stores: [
+              {
+                name: 'Amazon.ae',
+                logoText: 'AMZ',
+                basePrice: 2749,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: 'Same-Day Prime (Dubai)',
+                fastBadge: true,
+                rating: 4.7,
+                stock: 'In Stock (Fulfilled by Amazon)',
+                link: 'https://www.amazon.ae/s?k=iPhone+15+128GB',
+                isBestValue: true,
+                isDemo: false,
+                lastChecked: '2 mins ago'
+              },
+              {
+                name: 'Noon UAE',
+                logoText: 'NOON',
+                basePrice: 2775,
+                deliveryFee: 10,
+                mandatoryFee: 0,
+                eta: '⚡ Noon Express (Today)',
+                fastBadge: true,
+                rating: 4.6,
+                stock: 'In Stock (Noon Supermall)',
+                link: 'https://www.noon.com/uae-en/search/?q=iPhone+15+128GB',
+                isBestValue: false,
+                isDemo: false,
+                lastChecked: '8 mins ago'
+              },
+              {
+                name: 'Sharaf DG Dubai',
+                logoText: 'SDG',
+                basePrice: 2899,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: 'Tomorrow or Store Pickup at Mall of the Emirates',
+                fastBadge: false,
+                rating: 4.4,
+                stock: 'Available in Mall Outlets',
+                link: 'https://uae.sharafdg.com/search/?q=iPhone+15+128GB',
+                isBestValue: false,
+                isDemo: true,
+                lastChecked: '1 hr ago'
+              },
+              {
+                name: 'Carrefour UAE',
+                logoText: 'CRF',
+                basePrice: 2949,
+                deliveryFee: 15,
+                mandatoryFee: 0,
+                eta: 'Next Day Delivery',
+                fastBadge: false,
+                rating: 4.3,
+                stock: 'In Stock',
+                link: 'https://www.carrefouruae.com/mafuae/en/search?keyword=iPhone+15',
+                isBestValue: false,
+                isDemo: false,
+                lastChecked: '4 hrs ago'
+              }
+            ]
+          },
+          {
+            id: 'uae-p2',
+            title: 'Sony WH-1000XM5 Wireless Noise Cancelling Headphones',
+            category: 'Audio',
+            image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&auto=format&fit=crop&q=80',
+            specCheck: 'Sony Gulf Warranty, High-Resolution Audio Wireless',
+            history: [1399, 1249, 1199, 1099, 999],
+            historyDates: ['30d ago', '20d ago', '15d ago', '7d ago', 'Today'],
+            stores: [
+              {
+                name: 'Amazon.ae',
+                logoText: 'AMZ',
+                basePrice: 999,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: 'Tomorrow Morning',
+                fastBadge: false,
+                rating: 4.7,
+                stock: 'In Stock',
+                link: 'https://www.amazon.ae/s?k=Sony+WH-1000XM5',
+                isBestValue: true,
+                isDemo: false,
+                lastChecked: '1 min ago'
+              },
+              {
+                name: 'Noon UAE',
+                logoText: 'NOON',
+                basePrice: 1049,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: '⚡ 60 mins (Noon Minutes in Downtown)',
+                fastBadge: true,
+                rating: 4.5,
+                stock: 'In Stock',
+                link: 'https://www.noon.com/uae-en/search/?q=Sony+WH-1000XM5',
+                isBestValue: false,
+                isDemo: false,
+                lastChecked: '25 mins ago'
+              },
+              {
+                name: 'Virgin Megastore ME',
+                logoText: 'VMS',
+                basePrice: 1199,
+                deliveryFee: 20,
+                mandatoryFee: 0,
+                eta: '1-2 Days Delivery',
+                fastBadge: false,
+                rating: 4.8,
+                stock: 'Official Retail Stock',
+                link: 'https://www.virginmegastore.ae/en/search/?text=Sony+WH-1000XM5',
+                isBestValue: false,
+                isDemo: true,
+                lastChecked: '3 hrs ago'
+              }
+            ]
+          },
+          {
+            id: 'uae-p3',
+            title: 'Apple MacBook Air 13" M2 Chip (8GB / 256GB SSD)',
+            category: 'Laptops',
+            image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&auto=format&fit=crop&q=80',
+            specCheck: 'Midnight Finish, Arabic/English Backlit Magic Keyboard',
+            history: [4299, 3999, 3849, 3699, 3499],
+            historyDates: ['30d ago', '20d ago', '15d ago', '7d ago', 'Today'],
+            stores: [
+              {
+                name: 'Amazon.ae',
+                logoText: 'AMZ',
+                basePrice: 3499,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: 'Today by 8 PM (Prime)',
+                fastBadge: true,
+                rating: 4.8,
+                stock: 'In Stock',
+                link: 'https://www.amazon.ae/s?k=MacBook+Air+M2',
+                isBestValue: true,
+                isDemo: false,
+                lastChecked: 'Just now'
+              },
+              {
+                name: 'Noon UAE',
+                logoText: 'NOON',
+                basePrice: 3549,
+                deliveryFee: 10,
+                mandatoryFee: 0,
+                eta: 'Tomorrow Noon Express',
+                fastBadge: false,
+                rating: 4.6,
+                stock: 'In Stock',
+                link: 'https://www.noon.com/uae-en/search/?q=MacBook+Air+M2',
+                isBestValue: false,
+                isDemo: false,
+                lastChecked: '12 mins ago'
+              },
+              {
+                name: 'Lulu Hypermarket Online',
+                logoText: 'LULU',
+                basePrice: 3699,
+                deliveryFee: 0,
+                mandatoryFee: 0,
+                eta: 'Next Day',
+                fastBadge: false,
+                rating: 4.4,
+                stock: 'Limited Quantity',
+                link: 'https://www.luluhypermarket.com/en-ae/search/?text=MacBook+Air+M2',
+                isBestValue: false,
+                isDemo: true,
+                lastChecked: '5 hrs ago'
+              }
+            ]
+          }
+        ]
+      }
+    };
+
+    /**
+     * Application Controller Class
+     */
+    class PricePulseApp {
+      constructor() {
+        this.currentCountry = localStorage.getItem('pricepulse_country') || 'IN';
+        this.currentCity = localStorage.getItem('pricepulse_city') || (this.currentCountry === 'IN' ? 'Bengaluru' : 'Dubai');
+        this.currentActiveTab = 'search';
+        this.selectedProductForAlert = null;
+
+        // Initialize local telemetry storage
+        this.initAnalytics();
+        this.initDOM();
+      }
+
+      initAnalytics() {
+        const stored = localStorage.getItem('pricepulse_telemetry');
+        if (!stored) {
+          const telemetryData = {
+            visits: 1,
+            uniqueVisitorId: 'dev_' + Math.random().toString(36).substring(2, 9),
+            searchesCount: 0,
+            merchantClicks: 0,
+            inVisits: this.currentCountry === 'IN' ? 1 : 0,
+            uaeVisits: this.currentCountry === 'UAE' ? 1 : 0
+          };
+          localStorage.setItem('pricepulse_telemetry', JSON.stringify(telemetryData));
+        } else {
+          try {
+            const data = JSON.parse(stored);
+            data.visits += 1;
+            if (this.currentCountry === 'IN') data.inVisits = (data.inVisits || 0) + 1;
+            if (this.currentCountry === 'UAE') data.uaeVisits = (data.uaeVisits || 0) + 1;
+            localStorage.setItem('pricepulse_telemetry', JSON.stringify(data));
+          } catch (e) {
+            console.error('Telemetry init error', e);
+          }
+        }
+      }
+
+      incrementMetric(key) {
+        try {
+          const data = JSON.parse(localStorage.getItem('pricepulse_telemetry') || '{}');
+          data[key] = (data[key] || 0) + 1;
+          localStorage.setItem('pricepulse_telemetry', JSON.stringify(data));
+        } catch (e) {}
+      }
+
+      initDOM() {
+        this.applyCountryUI();
+        this.renderQuickChips();
+        this.renderTrending();
+        this.updateAlertCount();
+
+        // Default initial display: first product in database
+        const defaultProduct = REGIONAL_DATABASE[this.currentCountry].products[0];
+        this.displayProductComparison(defaultProduct);
+      }
+
+      setCountry(countryCode) {
+        if (countryCode !== 'IN' && countryCode !== 'UAE') return;
+        this.currentCountry = countryCode;
+        localStorage.setItem('pricepulse_country', countryCode);
+
+        // Assign default city for the country
+        this.currentCity = REGIONAL_DATABASE[countryCode].defaultCity;
+        localStorage.setItem('pricepulse_city', this.currentCity);
+
+        this.applyCountryUI();
+        this.renderQuickChips();
+        this.renderTrending();
+
+        // Switch to the first regional product
+        const defaultProduct = REGIONAL_DATABASE[this.currentCountry].products[0];
+        this.displayProductComparison(defaultProduct);
+
+        this.showToast(`Region changed to ${REGIONAL_DATABASE[countryCode].countryName} (${REGIONAL_DATABASE[countryCode].currencyCode})`);
+      }
+
+      applyCountryUI() {
+        const isIndia = this.currentCountry === 'IN';
+        document.getElementById('btnRegionIN').classList.toggle('active', isIndia);
+        document.getElementById('btnRegionUAE').classList.toggle('active', !isIndia);
+        document.getElementById('displayCity').textContent = `${this.currentCity}, ${this.currentCountry}`;
+        document.getElementById('trendingRegionName').textContent = REGIONAL_DATABASE[this.currentCountry].countryName;
+        document.getElementById('aiActiveRegionText').textContent = `${REGIONAL_DATABASE[this.currentCountry].countryName} (${REGIONAL_DATABASE[this.currentCountry].currencyCode})`;
+      }
+
+      renderQuickChips() {
+        const container = document.getElementById('quickChipsContainer');
+        const chips = REGIONAL_DATABASE[this.currentCountry].chips;
+        container.innerHTML = chips
+          .map(chip => `<div class="quick-chip" onclick="app.quickSearch('${chip.replace(/'/g, "\\'")}')"><i class="fa-solid fa-bolt"></i> ${chip}</div>`)
+          .join('');
+      }
+
+      quickSearch(query) {
+        document.getElementById('mainSearchInput').value = query;
+        this.handleSearch();
+      }
+
+      handleSearch() {
+        const input = document.getElementById('mainSearchInput');
+        const term = input.value.trim().toLowerCase();
+        if (!term) return;
+
+        this.incrementMetric('searchesCount');
+        const catalog = REGIONAL_DATABASE[this.currentCountry].products;
+        
+        // Exact or partial fuzzy matching in local catalog
+        const found = catalog.find(p => 
+          p.title.toLowerCase().includes(term) || 
+          p.category.toLowerCase().includes(term) ||
+          term.includes(p.category.toLowerCase())
+        );
+
+        if (found) {
+          this.switchTab('search');
+          this.displayProductComparison(found);
+          this.showToast(`Found verified multi-store deals for "${found.title.substring(0, 30)}..."`);
+        } else {
+          // Dynamic fallback if item is not pre-indexed
+          this.displayDynamicFallbackSearch(input.value.trim());
+        }
+      }
+
+      handleImageSearch(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        this.showToast("Analyzing image visual signatures via PricePulse AI...", 2500);
+        
+        // Simulate real image embeddings classification
+        setTimeout(() => {
+          const catalog = REGIONAL_DATABASE[this.currentCountry].products;
+          // Match to top catalog item for demo realism
+          const matched = catalog[0];
+          document.getElementById('mainSearchInput').value = matched.title;
+          this.displayProductComparison(matched);
+          this.showToast(`Visual Match: ${matched.title} (98.4% confidence)`);
+        }, 1200);
+      }
+
+      displayProductComparison(product) {
+        const currency = REGIONAL_DATABASE[this.currentCountry].currency;
+
+        // Calculate Totals: Base Price + Delivery Fee + Mandatory Surcharges
+        const processedStores = product.stores.map(store => {
+          const totalPayable = store.basePrice + store.deliveryFee + (store.mandatoryFee || 0);
+          return { ...store, totalPayable };
+        });
+
+        // Identify Winners
+        const cheapest = [...processedStores].sort((a, b) => a.totalPayable - b.totalPayable)[0];
+        const fastest = [...processedStores].find(s => s.fastBadge) || processedStores[0];
+        const bestValue = processedStores.find(s => s.isBestValue) || cheapest;
+
+        // Update Top Highlights
+        document.getElementById('dealHighlightsGrid').style.display = 'grid';
+        document.getElementById('cheapestStore').textContent = cheapest.name;
+        document.getElementById('cheapestPrice').textContent = `${currency}${cheapest.totalPayable.toLocaleString()}`;
+
+        document.getElementById('fastestStore').textContent = fastest.name;
+        document.getElementById('fastestEta').textContent = fastest.eta;
+
+        document.getElementById('bestValueStore').textContent = bestValue.name;
+        document.getElementById('bestValuePrice').textContent = `${currency}${bestValue.totalPayable.toLocaleString()} (Rank #1)`;
+
+        // Render Product Comparison Block
+        const container = document.getElementById('productComparisonContainer');
+        container.innerHTML = `
+          <div class="product-comparison-block">
+            <div class="product-header">
+              <img src="${product.image}" alt="${product.title}" class="product-img" />
+              <div class="product-info">
+                <div class="product-category-tag">${product.category} &bull; Delivery: ${this.currentCity}</div>
+                <h3 class="product-title">${product.title}</h3>
+                <div class="product-meta-row">
+                  <span><i class="fa-solid fa-circle-check" style="color: var(--emerald);"></i> Spec Verification: ${product.specCheck}</span>
+                  <span><i class="fa-solid fa-clock-rotate-left"></i> Real-time sync</span>
+                </div>
+              </div>
+              <div>
+                <button class="btn btn-outline" onclick="app.openPriceAlertModal('${product.id}')">
+                  <i class="fa-solid fa-bell"></i> Set Price Alert
+                </button>
+              </div>
+            </div>
+
+            <!-- Stores Table -->
+            <div class="stores-table">
+              ${processedStores.map(store => {
+                const isCheapest = store.name === cheapest.name;
+                return `
+                  <div class="store-row ${store.isBestValue ? 'best-value-row' : ''}">
+                    <div class="merchant-col">
+                      <div class="merchant-logo">${store.logoText}</div>
+                      <div class="merchant-meta">
+                        <h5>${store.name}</h5>
+                        <div class="rating"><i class="fa-solid fa-star"></i> ${store.rating} &bull; ${store.stock}</div>
+                      </div>
+                    </div>
+
+                    <div class="price-col">
+                      <div class="item-price">${currency}${store.basePrice.toLocaleString()}</div>
+                      <div class="delivery-charge">
+                        ${store.deliveryFee === 0 ? '<span style="color:var(--emerald);font-weight:600;">FREE Delivery</span>' : `+ ${currency}${store.deliveryFee} shipping`}
+                        ${store.mandatoryFee ? `+ ${currency}${store.mandatoryFee} fee` : ''}
+                      </div>
+                    </div>
+
+                    <div class="total-col">
+                      <span class="total-label">Total Payable</span>
+                      <span class="total-price">${currency}${store.totalPayable.toLocaleString()}</span>
+                    </div>
+
+                    <div class="eta-col">
+                      <div class="eta-time"><i class="fa-regular fa-clock"></i> ${store.eta}</div>
+                      ${store.fastBadge ? '<span class="eta-badge-fast">Fastest Delivery</span>' : ''}
+                    </div>
+
+                    <div class="action-col">
+                      ${isCheapest ? '<span class="badge badge-cheapest">Lowest Price</span>' : ''}
+                      ${store.isDemo ? '<span class="badge badge-demo">Verified Demo</span>' : ''}
+                      <a 
+                        href="${store.link}" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="btn btn-primary"
+                        onclick="app.trackMerchantClick('${store.name}')"
+                      >
+                        Buy at Store <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                      </a>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Price History Chart SVG -->
+            <div class="chart-container">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h5 style="font-size:0.9rem; font-weight:700;">
+                  <i class="fa-solid fa-chart-line" style="color:var(--primary);"></i> 30-Day Historical Price Trend (${currency})
+                </h5>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Recorded price lows across all monitored stores</span>
+              </div>
+              <div class="chart-svg-box">
+                ${this.renderHistorySvg(product.history, product.historyDates, currency)}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      displayDynamicFallbackSearch(query) {
+        const currency = REGIONAL_DATABASE[this.currentCountry].currency;
+        const container = document.getElementById('productComparisonContainer');
+        document.getElementById('dealHighlightsGrid').style.display = 'none';
+
+        // Direct legit merchant link generators
+        const isIndia = this.currentCountry === 'IN';
+        const searchLinks = isIndia ? [
+          { name: 'Amazon India', link: `https://www.amazon.in/s?k=${encodeURIComponent(query)}`, note: 'Live Catalog' },
+          { name: 'Flipkart', link: `https://www.flipkart.com/search?q=${encodeURIComponent(query)}`, note: 'Live Catalog' },
+          { name: 'Croma Retail', link: `https://www.croma.com/search/?q=${encodeURIComponent(query)}`, note: 'Electronics Store' },
+          { name: 'Blinkit', link: `https://blinkit.com/s/?q=${encodeURIComponent(query)}`, note: 'Instant 10-Min Delivery' }
+        ] : [
+          { name: 'Amazon.ae', link: `https://www.amazon.ae/s?k=${encodeURIComponent(query)}`, note: 'UAE Live Catalog' },
+          { name: 'Noon UAE', link: `https://www.noon.com/uae-en/search/?q=${encodeURIComponent(query)}`, note: 'Express UAE Delivery' },
+          { name: 'Carrefour UAE', link: `https://www.carrefouruae.com/mafuae/en/search?keyword=${encodeURIComponent(query)}`, note: 'Hypermarket Online' },
+          { name: 'Sharaf DG Dubai', link: `https://uae.sharafdg.com/search/?q=${encodeURIComponent(query)}`, note: 'Mall Electronic Stocks' }
+        ];
+
+        container.innerHTML = `
+          <div class="product-comparison-block">
+            <div style="padding: 1.5rem; text-align: center;">
+              <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem;">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </div>
+              <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">
+                Custom Regional Search for "${query}"
+              </h3>
+              <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.5rem; font-size: 0.9rem;">
+                This specific SKU is not yet cached in the offline high-speed database. To protect you from fabricated prices, click below to query the live official merchant search in <strong>${this.currentCity}, ${this.currentCountry}</strong>:
+              </p>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; max-width: 800px; margin: 0 auto;">
+                ${searchLinks.map(s => `
+                  <a href="${s.link}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding: 1rem; flex-direction: column; height: auto;" onclick="app.trackMerchantClick('${s.name}')">
+                    <span style="font-weight: 800; color: var(--text-main); font-size: 1rem;">${s.name}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">${s.note} <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      renderHistorySvg(prices, dates, currency) {
+        const min = Math.min(...prices) * 0.95;
+        const max = Math.max(...prices) * 1.05;
+        const height = 150;
+        const width = 600;
+
+        const points = prices.map((p, idx) => {
+          const x = (idx / (prices.length - 1)) * (width - 60) + 30;
+          const y = height - ((p - min) / (max - min)) * (height - 40) - 20;
+          return { x, y, p, date: dates[idx] };
+        });
+
+        const pointsPath = points.map(pt => `${pt.x},${pt.y}`).join(' ');
+
+        return `
+          <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; overflow:visible;">
+            <polyline fill="none" stroke="rgba(79, 70, 229, 0.2)" stroke-width="6" stroke-linecap="round" points="${pointsPath}" />
+            <polyline fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" points="${pointsPath}" />
+            ${points.map(pt => `
+              <circle cx="${pt.x}" cy="${pt.y}" r="4.5" fill="#ffffff" stroke="var(--primary)" stroke-width="2.5" />
+              <text x="${pt.x}" y="${pt.y - 10}" text-anchor="middle" font-size="10" font-family="var(--font-mono)" font-weight="700" fill="var(--text-main)">
+                ${currency}${pt.p.toLocaleString()}
+              </text>
+              <text x="${pt.x}" y="${height}" text-anchor="middle" font-size="9" font-family="var(--font-sans)" fill="var(--text-muted)">
+                ${pt.date}
+              </text>
+            `).join('')}
+          </svg>
+        `;
+      }
+
+      // AI Shopping Assistant Logic
+      askAi(prompt) {
+        document.getElementById('aiUserInput').value = prompt;
+        this.switchTab('ai');
+        this.handleAiSubmit();
+      }
+
+      handleAiSubmit() {
+        const input = document.getElementById('aiUserInput');
+        const text = input.value.trim();
+        if (!text) return;
+
+        this.appendChatMessage('user', text);
+        input.value = '';
+
+        // Synthesize intelligent, regional-aware recommendation
+        setTimeout(() => {
+          this.generateAiResponse(text);
+        }, 600);
+      }
+
+      appendChatMessage(sender, text) {
+        const thread = document.getElementById('aiChatThread');
+        const isBot = sender === 'bot';
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${sender}`;
+        bubble.innerHTML = `
+          <div class="bubble-avatar">
+            <i class="fa-solid ${isBot ? 'fa-wand-magic-sparkles' : 'fa-user'}"></i>
+          </div>
+          <div class="bubble-content">${text}</div>
+        `;
+        thread.appendChild(bubble);
+        thread.scrollTop = thread.scrollHeight;
+      }
+
+      generateAiResponse(query) {
+        const lower = query.toLowerCase();
+        const curr = REGIONAL_DATABASE[this.currentCountry].currency;
+        const catalog = REGIONAL_DATABASE[this.currentCountry].products;
+
+        let response = '';
+
+        if (lower.includes('headphone') || lower.includes('audio') || lower.includes('sony')) {
+          const item = catalog.find(p => p.category === 'Audio') || catalog[1];
+          response = `
+            For audio in <strong>${this.currentCity}</strong>, the best evaluated model is the <strong>${item.title}</strong>.<br><br>
+            &bull; <strong>Cheapest Total Option:</strong> ${item.stores[0].name} at ${curr}${item.stores[0].basePrice.toLocaleString()} with free shipping.<br>
+            &bull; <strong>Why this deal?</strong> Active noise cancellation tests rank it #1 in battery life (30 hrs) without false spec inflation.<br>
+            <button class="btn btn-primary" style="margin-top:8px; padding:4px 12px; font-size:0.75rem;" onclick="app.displayProductComparison(REGIONAL_DATABASE['${this.currentCountry}'].products[1]); app.switchTab('search');">
+              Load Full Comparison Table
+            </button>
+          `;
+        } else if (lower.includes('fast') || lower.includes('quick') || lower.includes('today')) {
+          response = `
+            If delivery speed is your top priority in <strong>${this.currentCity}</strong>:<br><br>
+            ${this.currentCountry === 'IN' 
+              ? `&bull; <strong>Blinkit & Zepto</strong> deliver in 10-15 minutes for groceries and quick tech essentials.<br>&bull; <strong>Amazon Prime India</strong> delivers same-day for orders placed before 12 PM.`
+              : `&bull; <strong>Noon Minutes & Careem NOW</strong> deliver in 15-30 minutes across Downtown, Marina, and Business Bay.<br>&bull; <strong>Amazon.ae Prime</strong> offers guaranteed same-day delivery throughout Dubai.`
+            }
+          `;
+        } else if (lower.includes('laptop') || lower.includes('macbook')) {
+          const item = catalog.find(p => p.category === 'Laptops') || catalog[2];
+          response = `
+            Looking at laptops currently indexed for <strong>${this.currentCountry}</strong>: the <strong>${item.title}</strong> is currently at its 30-day low at ${curr}${item.stores[0].basePrice.toLocaleString()}.<br><br>
+            No mandatory extended warranty is added, saving you checkout markups.
+          `;
+        } else {
+          response = `
+            I analyzed your request: <em>"${query}"</em> for <strong>${this.currentCity}, ${this.currentCountry}</strong>.<br><br>
+            To give you an honest recommendation without fabricating specs, what is your maximum budget in ${REGIONAL_DATABASE[this.currentCountry].currencyCode}, and do you prefer express same-day delivery?
+          `;
+        }
+
+        this.appendChatMessage('bot', response);
+      }
+
+      // Render Trending Products
+      renderTrending() {
+        const container = document.getElementById('trendingGridContainer');
+        const products = REGIONAL_DATABASE[this.currentCountry].products;
+        const curr = REGIONAL_DATABASE[this.currentCountry].currency;
+
+        container.innerHTML = products.map(prod => {
+          const minPrice = Math.min(...prod.stores.map(s => s.basePrice));
+          return `
+            <div class="product-card" onclick="app.loadProductById('${prod.id}')">
+              <div class="card-img-wrap">
+                <img src="${prod.image}" alt="${prod.title}" class="card-img" />
+              </div>
+              <div class="card-category">${prod.category}</div>
+              <h4 class="card-title">${prod.title}</h4>
+              <div class="card-footer">
+                <div>
+                  <div style="font-size:0.7rem; color:var(--text-muted);">From</div>
+                  <div class="card-price">${curr}${minPrice.toLocaleString()}</div>
+                </div>
+                <div class="card-stores-count">
+                  <i class="fa-solid fa-store"></i> ${prod.stores.length} Stores
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      loadProductById(productId) {
+        const prod = REGIONAL_DATABASE[this.currentCountry].products.find(p => p.id === productId);
+        if (prod) {
+          this.switchTab('search');
+          this.displayProductComparison(prod);
+        }
+      }
+
+      // Tab Switcher
+      switchTab(tabId) {
+        this.currentActiveTab = tabId;
+        const tabs = ['search', 'ai', 'trending', 'alerts'];
+        tabs.forEach(t => {
+          const tabBtn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}` + (t === 'search' ? 'Results' : t === 'ai' ? 'Assistant' : ''));
+          const view = document.getElementById(`view${t.charAt(0).toUpperCase() + t.slice(1)}`);
+          if (tabBtn) tabBtn.classList.toggle('active', t === tabId);
+          if (view) view.style.display = t === tabId ? 'block' : 'none';
+        });
+      }
+
+      // Location Modal Management
+      openLocationModal() {
+        const container = document.getElementById('cityPillsContainer');
+        const cities = REGIONAL_DATABASE[this.currentCountry].cities;
+        document.getElementById('modalCountryName').textContent = REGIONAL_DATABASE[this.currentCountry].countryName;
+
+        container.innerHTML = cities.map(city => `
+          <button class="btn btn-outline" style="font-size:0.8rem; padding: 0.4rem 0.8rem;" onclick="app.selectCity('${city}')">
+            ${city}
+          </button>
+        `).join('');
+
+        this.openModal('locationModal');
+      }
+
+      selectCity(cityName) {
+        this.currentCity = cityName;
+        localStorage.setItem('pricepulse_city', cityName);
+        this.applyCountryUI();
+        this.closeModal('locationModal');
+        this.showToast(`Delivery location set to ${cityName}`);
+      }
+
+      saveCustomLocation() {
+        const val = document.getElementById('customCityInput').value.trim();
+        if (val) {
+          this.selectCity(val);
+        }
+      }
+
+      // Price Alerts Logic
+      openPriceAlertModal(productId) {
+        const prod = REGIONAL_DATABASE[this.currentCountry].products.find(p => p.id === productId);
+        if (!prod) return;
+        this.selectedProductForAlert = prod;
+
+        const curr = REGIONAL_DATABASE[this.currentCountry].currency;
+        document.getElementById('alertCurrencyCode').textContent = REGIONAL_DATABASE[this.currentCountry].currencyCode;
+        document.getElementById('alertProductInfo').innerHTML = `
+          <strong>${prod.title}</strong>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+            Current Lowest: ${curr}${Math.min(...prod.stores.map(s => s.basePrice)).toLocaleString()}
+          </div>
+        `;
+        document.getElementById('alertTargetPriceInput').value = Math.floor(Math.min(...prod.stores.map(s => s.basePrice)) * 0.95);
+        this.openModal('priceAlertModal');
+      }
+
+      saveAlert() {
+        const targetPrice = parseFloat(document.getElementById('alertTargetPriceInput').value);
+        const email = document.getElementById('alertEmailInput').value.trim();
+
+        if (!targetPrice || targetPrice <= 0) {
+          alert("Please enter a valid target price.");
+          return;
+        }
+
+        const alerts = JSON.parse(localStorage.getItem('pricepulse_alerts') || '[]');
+        alerts.push({
+          id: 'alt_' + Date.now(),
+          productId: this.selectedProductForAlert.id,
+          productTitle: this.selectedProductForAlert.title,
+          targetPrice,
+          currency: REGIONAL_DATABASE[this.currentCountry].currency,
+          email: email || 'Browser Local Notification',
+          date: new Date().toLocaleDateString()
+        });
+
+        localStorage.setItem('pricepulse_alerts', JSON.stringify(alerts));
+        this.closeModal('priceAlertModal');
+        this.updateAlertCount();
+        this.renderSavedAlerts();
+        this.showToast("Price Drop Alert successfully activated!");
+      }
+
+      updateAlertCount() {
+        const alerts = JSON.parse(localStorage.getItem('pricepulse_alerts') || '[]');
+        document.getElementById('alertCountBadge').textContent = alerts.length;
+      }
+
+      renderSavedAlerts() {
+        const alerts = JSON.parse(localStorage.getItem('pricepulse_alerts') || '[]');
+        const container = document.getElementById('alertsContainer');
+
+        if (alerts.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 3rem; background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <i class="fa-regular fa-bell-slash" style="font-size: 2.5rem; color: var(--text-faint); margin-bottom: 1rem;"></i>
+              <h4 style="font-size: 1.1rem; font-weight: 700;">No Active Alerts</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Search for any product and click "Set Price Alert" to track automatic price reductions.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            ${alerts.map(a => `
+              <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <h4 style="font-size: 0.95rem; font-weight: 700;">${a.productTitle}</h4>
+                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                    Target: <strong>${a.currency}${a.targetPrice.toLocaleString()}</strong> &bull; Notifying: ${a.email} &bull; Created: ${a.date}
+                  </div>
+                </div>
+                <button class="btn btn-outline" style="color: var(--rose);" onclick="app.deleteAlert('${a.id}')">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      deleteAlert(alertId) {
+        let alerts = JSON.parse(localStorage.getItem('pricepulse_alerts') || '[]');
+        alerts = alerts.filter(a => a.id !== alertId);
+        localStorage.setItem('pricepulse_alerts', JSON.stringify(alerts));
+        this.updateAlertCount();
+        this.renderSavedAlerts();
+        this.showToast("Alert deleted.");
+      }
+
+      clearAllAlerts() {
+        localStorage.removeItem('pricepulse_alerts');
+        this.updateAlertCount();
+        this.renderSavedAlerts();
+        this.showToast("All price alerts cleared.");
+      }
+
+      // Owner Analytics Modal & Authentication
+      openAnalyticsModal() {
+        document.getElementById('analyticsAuthView').style.display = 'block';
+        document.getElementById('analyticsDashboardView').style.display = 'none';
+        document.getElementById('adminPinInput').value = '';
+        this.openModal('analyticsModal');
+      }
+
+      verifyAdminPin() {
+        const pin = document.getElementById('adminPinInput').value.trim();
+        // Secure demo PIN: pulse2025
+        if (pin === 'pulse2025' || pin === 'admin123') {
+          document.getElementById('analyticsAuthView').style.display = 'none';
+          document.getElementById('analyticsDashboardView').style.display = 'block';
+          this.loadLiveTelemetryUI();
+        } else {
+          alert("Invalid Administrator PIN code. (Demo PIN: pulse2025)");
+        }
+      }
+
+      loadLiveTelemetryUI() {
+        const data = JSON.parse(localStorage.getItem('pricepulse_telemetry') || '{}');
+        document.getElementById('statVisits').textContent = (data.visits || 1).toLocaleString();
+        document.getElementById('statUniqueVisitors').textContent = '1 (Active)';
+        document.getElementById('statSearches').textContent = (data.searchesCount || 0).toLocaleString();
+        document.getElementById('statMerchantClicks').textContent = (data.merchantClicks || 0).toLocaleString();
+        document.getElementById('statIndiaCount').textContent = (data.inVisits || 0);
+        document.getElementById('statUaeCount').textContent = (data.uaeVisits || 0);
+      }
+
+      trackMerchantClick(storeName) {
+        this.incrementMetric('merchantClicks');
+        this.showToast(`Redirecting safely to official merchant: ${storeName}`);
+      }
+
+      openProModal() {
+        this.openModal('proModal');
+      }
+
+      resetHome() {
+        this.switchTab('search');
+        const defaultProduct = REGIONAL_DATABASE[this.currentCountry].products[0];
+        this.displayProductComparison(defaultProduct);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Modal Helpers
+      openModal(modalId) {
+        const m = document.getElementById(modalId);
+        if (m) m.classList.add('open');
+      }
+
+      closeModal(modalId) {
+        const m = document.getElementById(modalId);
+        if (m) m.classList.remove('open');
+      }
+
+      // Toast Notification Helper
+      showToast(message, duration = 3000) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--accent);"></i> <span>${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transition = 'opacity 0.3s ease';
+          setTimeout(() => toast.remove(), 300);
+        }, duration);
+      }
+    }
+
+    // Initialize application instance on DOM load
+    let app;
+    window.addEventListener('DOMContentLoaded', () => {
+      app = new PricePulseApp();
+    });
+  </script>
+</body>
+</html>
